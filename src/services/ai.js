@@ -9,10 +9,10 @@ let _aiEnabled = null;
 
 /**
  * Check if AI is available by hitting the health endpoint.
- * Caches the result after first call.
+ * Caches a positive result. Retries on failure.
  */
 export async function isAIEnabled() {
-  if (_aiEnabled !== null) return _aiEnabled;
+  if (_aiEnabled === true) return true;
   try {
     const res = await fetch(`${API_BASE}/api/health`, { signal: AbortSignal.timeout(3000) });
     if (!res.ok) { _aiEnabled = false; return false; }
@@ -36,7 +36,7 @@ export function resetAIStatus() {
  * Request an AI hint.
  * @returns {{ hint: string, question: string } | null} — null on failure
  */
-export async function getAIHint({ problem, code, language }) {
+export async function getAIHint({ problem, code, language, previousHints = [] }) {
   try {
     const res = await fetch(`${API_BASE}/api/ai`, {
       method: 'POST',
@@ -47,6 +47,7 @@ export async function getAIHint({ problem, code, language }) {
         problem: problem.title,
         code,
         language,
+        previousHints,
       }),
     });
     if (!res.ok) return null;

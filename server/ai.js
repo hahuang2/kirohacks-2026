@@ -22,6 +22,7 @@ const HINT_INSTRUCTIONS = `Hint behavior:
 - If code is wrong, gently guide toward the right idea
 - If code is close, give a more precise hint
 - Do not include full code or full steps
+- IMPORTANT: Do NOT repeat any hint or concept from the "Previous hints already given" list. Build on them instead and go deeper.
 
 Return JSON: {"hint": "...", "question": "..."}`;
 
@@ -44,9 +45,13 @@ const QUESTION_INSTRUCTIONS = `Question behavior:
 Return JSON: {"answer": "...", "followUpQuestion": "..."}`;
 
 function buildUserMessage(body) {
-  const { type, problem, code, language, results, question } = body;
+  const { type, problem, code, language, results, question, previousHints } = body;
 
   let msg = `Problem: ${problem}\nLanguage: ${language}\nCode:\n${code || '(empty)'}`;
+
+  if (previousHints?.length) {
+    msg += `\n\nPrevious hints already given (do NOT repeat these):\n${previousHints.map((h, i) => `${i + 1}. ${h}`).join('\n')}`;
+  }
 
   if (results) {
     msg += `\n\nResults: ${results.passed}/${results.total} passed`;

@@ -1,13 +1,8 @@
 /**
  * DebriefPanel displays the full debrief after submission.
- *
- * Props:
- *   debrief — DebriefData object containing correctness, complexity,
- *             feedback, edge cases, alternative approaches, readiness score,
- *             and elapsed time
- *   onBack  — Callback invoked when the user clicks the "Back" button
  */
 
+import { useState } from 'react';
 import { formatTime } from '../utils/timer';
 import ApproachCard from './ApproachCard';
 
@@ -24,6 +19,8 @@ export default function DebriefPanel({ debrief, onBack }) {
     aiDebrief,
     aiStats,
   } = debrief;
+
+  const [showApproaches, setShowApproaches] = useState(false);
 
   return (
     <section className="space-y-6 p-6" aria-label="Debrief panel">
@@ -47,6 +44,38 @@ export default function DebriefPanel({ debrief, onBack }) {
           <span className="text-lg font-normal text-indigo-400"> / 100</span>
         </p>
       </div>
+
+      {/* AI Coach Analysis — at the top */}
+      {aiDebrief && (
+        <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-purple-600">
+            🤖 AI Coach Analysis
+          </h3>
+          <div className="mt-3 space-y-3 text-sm text-gray-800">
+            <div>
+              <p className="font-semibold text-purple-700">Main Issue</p>
+              <p>{aiDebrief.mainIssue}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">Why It Failed</p>
+              <p>{aiDebrief.whyItFailed}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">Missed Concept</p>
+              <p>{aiDebrief.missedConcept}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">How to Improve</p>
+              <p>{aiDebrief.howToImprove}</p>
+            </div>
+            {aiDebrief.reflectionQuestion && (
+              <div className="rounded-md border border-purple-300 bg-white p-2">
+                <p className="italic text-purple-700">💡 {aiDebrief.reflectionQuestion}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Correctness Summary */}
       <div className="rounded-lg border border-gray-200 bg-white p-4">
@@ -110,17 +139,27 @@ export default function DebriefPanel({ debrief, onBack }) {
         </div>
       )}
 
-      {/* Alternative Approaches */}
+      {/* Alternative Approaches — hidden by default */}
       {alternativeApproaches.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-            Alternative Approaches
-          </h3>
-          <div className="mt-2 space-y-3">
-            {alternativeApproaches.map((approach, index) => (
-              <ApproachCard key={index} approach={approach} />
-            ))}
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+              Alternative Approaches
+            </h3>
+            <button
+              onClick={() => setShowApproaches(!showApproaches)}
+              className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            >
+              {showApproaches ? 'Hide' : 'Show Solutions'}
+            </button>
           </div>
+          {showApproaches && (
+            <div className="mt-3 space-y-3">
+              {alternativeApproaches.map((approach, index) => (
+                <ApproachCard key={index} approach={approach} />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -133,38 +172,6 @@ export default function DebriefPanel({ debrief, onBack }) {
           {formatTime(elapsedTime)}
         </p>
       </div>
-
-      {/* AI Coach Analysis */}
-      {aiDebrief && (
-        <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-purple-600">
-            🤖 AI Coach Analysis
-          </h3>
-          <div className="mt-3 space-y-3 text-sm text-gray-800">
-            <div>
-              <p className="font-semibold text-purple-700">Main Issue</p>
-              <p>{aiDebrief.mainIssue}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-purple-700">Why It Failed</p>
-              <p>{aiDebrief.whyItFailed}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-purple-700">Missed Concept</p>
-              <p>{aiDebrief.missedConcept}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-purple-700">How to Improve</p>
-              <p>{aiDebrief.howToImprove}</p>
-            </div>
-            {aiDebrief.reflectionQuestion && (
-              <div className="rounded-md border border-purple-300 bg-white p-2">
-                <p className="italic text-purple-700">💡 {aiDebrief.reflectionQuestion}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* AI Assistance Stats */}
       {aiStats && (aiStats.hintsUsed > 0 || aiStats.questionsAsked > 0) && (

@@ -37,9 +37,19 @@ export default function App() {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [questionsAsked, setQuestionsAsked] = useState(0);
 
-  // Check AI availability on mount
+  // Check AI availability on mount and retry periodically
   useEffect(() => {
-    isAIEnabled().then(setAiEnabled);
+    let cancelled = false;
+    async function check() {
+      const enabled = await isAIEnabled();
+      if (!cancelled) setAiEnabled(enabled);
+      // If not enabled, retry every 5 seconds
+      if (!enabled && !cancelled) {
+        setTimeout(check, 5000);
+      }
+    }
+    check();
+    return () => { cancelled = true; };
   }, []);
 
   // Load all problems on mount
@@ -166,7 +176,7 @@ export default function App() {
     if (aiEnabled) {
       setIsRunning(true);
       try {
-        const aiHint = await getAIHint({ problem, code, language });
+        const aiHint = await getAIHint({ problem, code, language, previousHints: hints });
         if (aiHint?.hint) {
           const hintText = aiHint.question
             ? `${aiHint.hint}\n💡 ${aiHint.question}`
@@ -294,7 +304,7 @@ export default function App() {
             <LanguageSelector language={language} onChange={onLanguageChange} />
           </div>
 
-          <div className="flex-1 overflow-hidden">
+          <div className="h-1/2 overflow-hidden">
             <CodeEditor code={code} onChange={onCodeChange} language={language} />
           </div>
 
@@ -306,13 +316,13 @@ export default function App() {
             isLoading={aiLoading}
           />
 
-          {/* Test results — compact, scrollable */}
-          <div className="h-24 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">
+          {/* Test results */}
+          <div className="h-32 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">
             <TestResults results={testResults} />
           </div>
 
           {/* Hints */}
-          <div className="h-44 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">
+          <div className="flex-1 overflow-y-auto border-t border-gray-200 bg-white">
             <HintDisplay hints={hints} />
           </div>
         </div>
