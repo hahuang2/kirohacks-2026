@@ -1,0 +1,647 @@
+[
+  {
+    "id": "two-sum",
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+    "examples": [
+      {
+        "input": "nums = [2,7,11,15], target = 9",
+        "output": "[0,1]",
+        "explanation": "Because nums[0] + nums[1] == 9, we return [0, 1]."
+      },
+      {
+        "input": "nums = [3,2,4], target = 6",
+        "output": "[1,2]",
+        "explanation": "Because nums[1] + nums[2] == 6, we return [1, 2]."
+      },
+      {
+        "input": "nums = [3,3], target = 6",
+        "output": "[0,1]",
+        "explanation": "Because nums[0] + nums[1] == 6, we return [0, 1]."
+      }
+    ],
+    "constraints": [
+      "2 <= nums.length <= 10^4",
+      "-10^9 <= nums[i] <= 10^9",
+      "-10^9 <= target <= 10^9",
+      "Only one valid answer exists."
+    ],
+    "starterCode": "function twoSum(nums, target) {\n  // Write your solution here\n}",
+    "starterCodePython": "def two_sum(nums, target):\n    # Write your solution here\n    pass",
+    "sampleTestCases": [
+      {
+        "id": "sample-1",
+        "input": [[2, 7, 11, 15], 9],
+        "expected": [0, 1],
+        "description": "Basic case with answer at the beginning"
+      },
+      {
+        "id": "sample-2",
+        "input": [[3, 2, 4], 6],
+        "expected": [1, 2],
+        "description": "Answer in the middle of the array"
+      },
+      {
+        "id": "sample-3",
+        "input": [[3, 3], 6],
+        "expected": [0, 1],
+        "description": "Duplicate values that sum to target"
+      }
+    ],
+    "hiddenTestCases": [
+      {
+        "id": "hidden-1",
+        "input": [[1, 2], 3],
+        "expected": [0, 1],
+        "description": "Two-element array"
+      },
+      {
+        "id": "hidden-2",
+        "input": [[-1, -2, -3, -4, -5], -8],
+        "expected": [2, 4],
+        "description": "All negative numbers"
+      },
+      {
+        "id": "hidden-3",
+        "input": [[1000000000, 2, 1000000000], 2000000000],
+        "expected": [0, 2],
+        "description": "Large numbers near constraint boundary"
+      },
+      {
+        "id": "hidden-4",
+        "input": [[5, 5, 5, 5], 10],
+        "expected": [0, 1],
+        "description": "Array with all duplicate values"
+      },
+      {
+        "id": "hidden-5",
+        "input": [[1, 3, 5, 7, 9, 2], 11],
+        "expected": [4, 5],
+        "description": "Answer at the end of the array"
+      }
+    ],
+    "hints": {
+      "progressiveHints": [
+        "Think about what value you need to find for each element to reach the target.",
+        "For each number, the complement is target - number. How can you quickly check if you've seen the complement before?",
+        "A hash map (JavaScript Map or object) can store values you've already visited, allowing O(1) lookups for the complement."
+      ],
+      "keyInsight": "Use a hash map to store each number's index as you iterate, then check if the complement (target - current number) already exists in the map.",
+      "approachKeywords": ["map", "Map", "hash", "object", "complement", "difference"]
+    },
+    "debrief": {
+      "optimalTimeComplexity": "O(n)",
+      "optimalSpaceComplexity": "O(n)",
+      "edgeCases": [
+        "Two-element array (minimum valid input)",
+        "Negative numbers in the array",
+        "Large numbers near the constraint boundary",
+        "Duplicate values in the array",
+        "Answer indices at the end of the array"
+      ],
+      "alternativeApproaches": [
+        {
+          "name": "Brute Force",
+          "description": "Use two nested loops to check every pair of numbers. For each element, iterate through the rest of the array to find a complement that sums to the target.",
+          "timeComplexity": "O(n^2)",
+          "spaceComplexity": "O(1)",
+          "codeSolutions": {
+            "javascript": "function twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}",
+            "python": "def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []",
+            "java": "public int[] twoSum(int[] nums, int target) {\n    for (int i = 0; i < nums.length; i++) {\n        for (int j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] == target) {\n                return new int[]{i, j};\n            }\n        }\n    }\n    return new int[]{};\n}"
+          }
+        },
+        {
+          "name": "Hash Map (Optimal)",
+          "description": "Iterate through the array once, storing each number and its index in a hash map. For each element, check if the complement (target - current) already exists in the map.",
+          "timeComplexity": "O(n)",
+          "spaceComplexity": "O(n)",
+          "codeSolutions": {
+            "javascript": "function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}",
+            "python": "def two_sum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []",
+            "java": "public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        if (map.containsKey(complement)) {\n            return new int[]{map.get(complement), i};\n        }\n        map.put(nums[i], i);\n    }\n    return new int[]{};\n}"
+          }
+        },
+        {
+          "name": "Sorting with Two Pointers",
+          "description": "Sort a copy of the array with original indices, then use two pointers from both ends to find the pair. Note: requires tracking original indices.",
+          "timeComplexity": "O(n log n)",
+          "spaceComplexity": "O(n)",
+          "codeSolutions": {
+            "javascript": "function twoSum(nums, target) {\n  const indexed = nums.map((val, idx) => [val, idx]);\n  indexed.sort((a, b) => a[0] - b[0]);\n  let left = 0;\n  let right = indexed.length - 1;\n  while (left < right) {\n    const sum = indexed[left][0] + indexed[right][0];\n    if (sum === target) {\n      return [indexed[left][1], indexed[right][1]];\n    } else if (sum < target) {\n      left++;\n    } else {\n      right--;\n    }\n  }\n  return [];\n}",
+            "python": "def two_sum(nums, target):\n    indexed = sorted(enumerate(nums), key=lambda x: x[1])\n    left, right = 0, len(indexed) - 1\n    while left < right:\n        current_sum = indexed[left][1] + indexed[right][1]\n        if current_sum == target:\n            return [indexed[left][0], indexed[right][0]]\n        elif current_sum < target:\n            left += 1\n        else:\n            right -= 1\n    return []",
+            "java": "public int[] twoSum(int[] nums, int target) {\n    int[][] indexed = new int[nums.length][2];\n    for (int i = 0; i < nums.length; i++) {\n        indexed[i] = new int[]{nums[i], i};\n    }\n    Arrays.sort(indexed, (a, b) -> Integer.compare(a[0], b[0]));\n    int left = 0, right = nums.length - 1;\n    while (left < right) {\n        int sum = indexed[left][0] + indexed[right][0];\n        if (sum == target) {\n            return new int[]{indexed[left][1], indexed[right][1]};\n        } else if (sum < target) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    return new int[]{};\n}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-parentheses",
+    "title": "Valid Parentheses",
+    "difficulty": "Easy",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.",
+    "examples": [
+      {
+        "input": "s = \"()\"",
+        "output": "true",
+        "explanation": "The single pair of parentheses is properly opened and closed."
+      },
+      {
+        "input": "s = \"()[]{}\"",
+        "output": "true",
+        "explanation": "All three types of brackets are properly opened and closed."
+      },
+      {
+        "input": "s = \"(]\"",
+        "output": "false",
+        "explanation": "The opening parenthesis is closed by a square bracket, which is a mismatch."
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^4",
+      "s consists of parentheses only '()[]{}'"
+    ],
+    "starterCode": "function isValid(s) {\n  // Write your solution here\n}",
+    "starterCodePython": "def is_valid(s):\n    # Write your solution here\n    pass",
+    "sampleTestCases": [
+      {
+        "id": "sample-1",
+        "input": ["()"],
+        "expected": true,
+        "description": "Simple matching parentheses"
+      },
+      {
+        "id": "sample-2",
+        "input": ["()[]{}"],
+        "expected": true,
+        "description": "Multiple types of matching brackets"
+      },
+      {
+        "id": "sample-3",
+        "input": ["(]"],
+        "expected": false,
+        "description": "Mismatched bracket types"
+      }
+    ],
+    "hiddenTestCases": [
+      {
+        "id": "hidden-1",
+        "input": ["("],
+        "expected": false,
+        "description": "Single opening bracket with no closing"
+      },
+      {
+        "id": "hidden-2",
+        "input": [""],
+        "expected": true,
+        "description": "Empty string is valid"
+      },
+      {
+        "id": "hidden-3",
+        "input": ["{[]}"],
+        "expected": true,
+        "description": "Nested brackets of different types"
+      },
+      {
+        "id": "hidden-4",
+        "input": ["([)]"],
+        "expected": false,
+        "description": "Interleaved brackets that are not properly nested"
+      },
+      {
+        "id": "hidden-5",
+        "input": ["))(("],
+        "expected": false,
+        "description": "Closing brackets before opening brackets"
+      }
+    ],
+    "hints": {
+      "progressiveHints": [
+        "Think about what data structure lets you match the most recent opening bracket with the current closing bracket.",
+        "A stack follows Last-In-First-Out (LIFO) order. Push opening brackets onto the stack and pop when you encounter a closing bracket.",
+        "Use a hash map to pair each closing bracket with its matching opening bracket. When you see a closing bracket, check if the top of the stack matches."
+      ],
+      "keyInsight": "Use a stack to track opening brackets. When you encounter a closing bracket, the top of the stack must be the matching opening bracket. If the stack is empty at the end, the string is valid.",
+      "approachKeywords": ["stack", "push", "pop", "map", "matching", "pair"]
+    },
+    "debrief": {
+      "optimalTimeComplexity": "O(n)",
+      "optimalSpaceComplexity": "O(n)",
+      "edgeCases": [
+        "Empty string (valid)",
+        "Single character (always invalid)",
+        "Only opening brackets",
+        "Only closing brackets",
+        "Interleaved but not properly nested brackets like ([)]",
+        "Deeply nested brackets"
+      ],
+      "alternativeApproaches": [
+        {
+          "name": "Stack with Hash Map",
+          "description": "Use a stack to track opening brackets. For each closing bracket, check if the top of the stack is the matching opening bracket using a hash map for bracket pairs. If the stack is empty at the end, the string is valid.",
+          "timeComplexity": "O(n)",
+          "spaceComplexity": "O(n)",
+          "codeSolutions": {
+            "javascript": "function isValid(s) {\n  const stack = [];\n  const map = { ')': '(', '}': '{', ']': '[' };\n  for (const char of s) {\n    if (char in map) {\n      if (stack.length === 0 || stack.pop() !== map[char]) {\n        return false;\n      }\n    } else {\n      stack.push(char);\n    }\n  }\n  return stack.length === 0;\n}",
+            "python": "def is_valid(s):\n    stack = []\n    mapping = {')': '(', '}': '{', ']': '['}\n    for char in s:\n        if char in mapping:\n            if not stack or stack.pop() != mapping[char]:\n                return False\n        else:\n            stack.append(char)\n    return len(stack) == 0",
+            "java": "public boolean isValid(String s) {\n    Stack<Character> stack = new Stack<>();\n    Map<Character, Character> map = Map.of(')', '(', '}', '{', ']', '[');\n    for (char c : s.toCharArray()) {\n        if (map.containsKey(c)) {\n            if (stack.isEmpty() || stack.pop() != map.get(c)) {\n                return false;\n            }\n        } else {\n            stack.push(c);\n        }\n    }\n    return stack.isEmpty();\n}"
+          }
+        },
+        {
+          "name": "Replace Pairs Iteratively",
+          "description": "Repeatedly replace all adjacent matching pairs '()', '[]', '{}' with empty strings until no more replacements can be made. If the resulting string is empty, the input was valid.",
+          "timeComplexity": "O(n^2)",
+          "spaceComplexity": "O(n)",
+          "codeSolutions": {
+            "javascript": "function isValid(s) {\n  let prev = '';\n  while (s !== prev) {\n    prev = s;\n    s = s.replace('()', '').replace('[]', '').replace('{}', '');\n  }\n  return s.length === 0;\n}",
+            "python": "def is_valid(s):\n    prev = ''\n    while s != prev:\n        prev = s\n        s = s.replace('()', '').replace('[]', '').replace('{}', '')\n    return len(s) == 0",
+            "java": "public boolean isValid(String s) {\n    String prev = \"\";\n    while (!s.equals(prev)) {\n        prev = s;\n        s = s.replace(\"()\", \"\").replace(\"[]\", \"\").replace(\"{}\", \"\");\n    }\n    return s.isEmpty();\n}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "container-with-most-water",
+    "title": "Container With Most Water",
+    "difficulty": "Medium",
+    "description": "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturn the maximum amount of water a container can store.\n\nNotice that you may not slant the container.",
+    "examples": [
+      {
+        "input": "height = [1,8,6,2,5,4,8,3,7]",
+        "output": "49",
+        "explanation": "The vertical lines at index 1 (height 8) and index 8 (height 7) form a container with area min(8,7) * (8-1) = 49."
+      },
+      {
+        "input": "height = [1,1]",
+        "output": "1",
+        "explanation": "The only container possible has area min(1,1) * (1-0) = 1."
+      }
+    ],
+    "constraints": [
+      "n == height.length",
+      "2 <= n <= 10^5",
+      "0 <= height[i] <= 10^4"
+    ],
+    "starterCode": "function maxArea(height) {\n  // Write your solution here\n}",
+    "starterCodePython": "def max_area(height):\n    # Write your solution here\n    pass",
+    "sampleTestCases": [
+      {
+        "id": "sample-1",
+        "input": [[1, 8, 6, 2, 5, 4, 8, 3, 7]],
+        "expected": 49,
+        "description": "Classic example with optimal pair in the middle"
+      },
+      {
+        "id": "sample-2",
+        "input": [[1, 1]],
+        "expected": 1,
+        "description": "Minimum length array with equal heights"
+      },
+      {
+        "id": "sample-3",
+        "input": [[4, 3, 2, 1, 4]],
+        "expected": 16,
+        "description": "Optimal pair at the two ends of the array"
+      }
+    ],
+    "hiddenTestCases": [
+      {
+        "id": "hidden-1",
+        "input": [[1, 2, 4, 3]],
+        "expected": 4,
+        "description": "Small array where inner pair is optimal"
+      },
+      {
+        "id": "hidden-2",
+        "input": [[2, 3, 10, 5, 7, 8, 9]],
+        "expected": 36,
+        "description": "Tall line in the middle with shorter lines around it"
+      },
+      {
+        "id": "hidden-3",
+        "input": [[10000, 10000]],
+        "expected": 10000,
+        "description": "Maximum height values with minimum length"
+      },
+      {
+        "id": "hidden-4",
+        "input": [[0, 0, 0, 0]],
+        "expected": 0,
+        "description": "All zero heights produce zero area"
+      },
+      {
+        "id": "hidden-5",
+        "input": [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+        "expected": 25,
+        "description": "Monotonically increasing heights"
+      }
+    ],
+    "hints": {
+      "progressiveHints": [
+        "The area between two lines is determined by the shorter line and the distance between them. How can you maximize both factors?",
+        "Start with the widest possible container (first and last lines). Which pointer should you move inward to potentially find a larger area?",
+        "Always move the pointer pointing to the shorter line inward. Moving the taller line can never increase the area since the width decreases and the height is limited by the shorter line."
+      ],
+      "keyInsight": "Use two pointers starting at both ends. The area is limited by the shorter line, so always move the shorter pointer inward to potentially find a taller line that increases the area.",
+      "approachKeywords": ["two pointers", "left", "right", "pointer", "greedy", "width", "height"]
+    },
+    "debrief": {
+      "optimalTimeComplexity": "O(n)",
+      "optimalSpaceComplexity": "O(1)",
+      "edgeCases": [
+        "Two-element array (minimum valid input)",
+        "All heights are zero",
+        "All heights are equal",
+        "Monotonically increasing or decreasing heights",
+        "Maximum height values at the constraint boundary",
+        "Optimal pair at the ends of the array"
+      ],
+      "alternativeApproaches": [
+        {
+          "name": "Brute Force",
+          "description": "Check every pair of lines and calculate the area for each pair. Track the maximum area found. For each pair (i, j), the area is min(height[i], height[j]) * (j - i).",
+          "timeComplexity": "O(n^2)",
+          "spaceComplexity": "O(1)",
+          "codeSolutions": {
+            "javascript": "function maxArea(height) {\n  let maxWater = 0;\n  for (let i = 0; i < height.length; i++) {\n    for (let j = i + 1; j < height.length; j++) {\n      const area = Math.min(height[i], height[j]) * (j - i);\n      maxWater = Math.max(maxWater, area);\n    }\n  }\n  return maxWater;\n}",
+            "python": "def max_area(height):\n    max_water = 0\n    for i in range(len(height)):\n        for j in range(i + 1, len(height)):\n            area = min(height[i], height[j]) * (j - i)\n            max_water = max(max_water, area)\n    return max_water",
+            "java": "public int maxArea(int[] height) {\n    int maxWater = 0;\n    for (int i = 0; i < height.length; i++) {\n        for (int j = i + 1; j < height.length; j++) {\n            int area = Math.min(height[i], height[j]) * (j - i);\n            maxWater = Math.max(maxWater, area);\n        }\n    }\n    return maxWater;\n}"
+          }
+        },
+        {
+          "name": "Two Pointers (Optimal)",
+          "description": "Use two pointers starting at the leftmost and rightmost lines. Calculate the area, then move the pointer pointing to the shorter line inward. The key insight is that moving the shorter pointer is the only way to potentially find a larger area, since the width is decreasing.",
+          "timeComplexity": "O(n)",
+          "spaceComplexity": "O(1)",
+          "codeSolutions": {
+            "javascript": "function maxArea(height) {\n  let left = 0;\n  let right = height.length - 1;\n  let maxWater = 0;\n  while (left < right) {\n    const area = Math.min(height[left], height[right]) * (right - left);\n    maxWater = Math.max(maxWater, area);\n    if (height[left] < height[right]) {\n      left++;\n    } else {\n      right--;\n    }\n  }\n  return maxWater;\n}",
+            "python": "def max_area(height):\n    left, right = 0, len(height) - 1\n    max_water = 0\n    while left < right:\n        area = min(height[left], height[right]) * (right - left)\n        max_water = max(max_water, area)\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return max_water",
+            "java": "public int maxArea(int[] height) {\n    int left = 0;\n    int right = height.length - 1;\n    int maxWater = 0;\n    while (left < right) {\n        int area = Math.min(height[left], height[right]) * (right - left);\n        maxWater = Math.max(maxWater, area);\n        if (height[left] < height[right]) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    return maxWater;\n}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "longest-substring-without-repeating",
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "Medium",
+    "description": "Given a string s, find the length of the longest substring without repeating characters.\n\nA substring is a contiguous non-empty sequence of characters within a string.",
+    "examples": [
+      {
+        "input": "s = \"abcabcbb\"",
+        "output": "3",
+        "explanation": "The answer is \"abc\", with the length of 3."
+      },
+      {
+        "input": "s = \"bbbbb\"",
+        "output": "1",
+        "explanation": "The answer is \"b\", with the length of 1."
+      },
+      {
+        "input": "s = \"pwwkew\"",
+        "output": "3",
+        "explanation": "The answer is \"wke\", with the length of 3. Notice that \"pwke\" is a subsequence, not a substring."
+      }
+    ],
+    "constraints": [
+      "0 <= s.length <= 5 * 10^4",
+      "s consists of English letters, digits, symbols and spaces."
+    ],
+    "starterCode": "function lengthOfLongestSubstring(s) {\n  // Write your solution here\n}",
+    "starterCodePython": "def length_of_longest_substring(s):\n    # Write your solution here\n    pass",
+    "sampleTestCases": [
+      {
+        "id": "sample-1",
+        "input": ["abcabcbb"],
+        "expected": 3,
+        "description": "Repeating pattern with longest unique substring at the start"
+      },
+      {
+        "id": "sample-2",
+        "input": ["bbbbb"],
+        "expected": 1,
+        "description": "All identical characters"
+      },
+      {
+        "id": "sample-3",
+        "input": ["pwwkew"],
+        "expected": 3,
+        "description": "Longest unique substring in the middle"
+      }
+    ],
+    "hiddenTestCases": [
+      {
+        "id": "hidden-1",
+        "input": [""],
+        "expected": 0,
+        "description": "Empty string returns 0"
+      },
+      {
+        "id": "hidden-2",
+        "input": ["abcdefg"],
+        "expected": 7,
+        "description": "All unique characters — entire string is the answer"
+      },
+      {
+        "id": "hidden-3",
+        "input": [" "],
+        "expected": 1,
+        "description": "Single space character"
+      },
+      {
+        "id": "hidden-4",
+        "input": ["dvdf"],
+        "expected": 3,
+        "description": "Tricky case where the window must skip past a repeated character"
+      },
+      {
+        "id": "hidden-5",
+        "input": ["aab"],
+        "expected": 2,
+        "description": "Duplicate at the start with unique character at the end"
+      }
+    ],
+    "hints": {
+      "progressiveHints": [
+        "Think about how you can examine substrings efficiently without checking every possible one.",
+        "A sliding window lets you expand and shrink a range of characters. What data structure helps you quickly check if a character is already in the current window?",
+        "Use a Set (or Map) to track characters in the current window. When you encounter a duplicate, shrink the window from the left until the duplicate is removed."
+      ],
+      "keyInsight": "Use a sliding window with two pointers and a Set to track characters in the current window. Expand the right pointer to include new characters, and shrink from the left when a duplicate is found.",
+      "approachKeywords": ["sliding window", "set", "Set", "map", "Map", "two pointers", "window", "hash"]
+    },
+    "debrief": {
+      "optimalTimeComplexity": "O(n)",
+      "optimalSpaceComplexity": "O(min(m, n))",
+      "edgeCases": [
+        "Empty string (returns 0)",
+        "All identical characters",
+        "All unique characters (entire string is the answer)",
+        "Single character string",
+        "String with spaces and special characters",
+        "Duplicate that requires the window to jump forward"
+      ],
+      "alternativeApproaches": [
+        {
+          "name": "Brute Force",
+          "description": "Check every possible substring and verify if it contains all unique characters. Track the maximum length found. For each starting index, expand the substring until a duplicate is found or the string ends.",
+          "timeComplexity": "O(n^3)",
+          "spaceComplexity": "O(min(m, n))",
+          "codeSolutions": {
+            "javascript": "function lengthOfLongestSubstring(s) {\n  let maxLen = 0;\n  for (let i = 0; i < s.length; i++) {\n    for (let j = i; j < s.length; j++) {\n      const sub = s.slice(i, j + 1);\n      if (new Set(sub).size === sub.length) {\n        maxLen = Math.max(maxLen, sub.length);\n      } else {\n        break;\n      }\n    }\n  }\n  return maxLen;\n}",
+            "python": "def length_of_longest_substring(s):\n    max_len = 0\n    for i in range(len(s)):\n        for j in range(i, len(s)):\n            sub = s[i:j + 1]\n            if len(set(sub)) == len(sub):\n                max_len = max(max_len, len(sub))\n            else:\n                break\n    return max_len",
+            "java": "public int lengthOfLongestSubstring(String s) {\n    int maxLen = 0;\n    for (int i = 0; i < s.length(); i++) {\n        Set<Character> seen = new HashSet<>();\n        for (int j = i; j < s.length(); j++) {\n            if (seen.contains(s.charAt(j))) {\n                break;\n            }\n            seen.add(s.charAt(j));\n            maxLen = Math.max(maxLen, j - i + 1);\n        }\n    }\n    return maxLen;\n}"
+          }
+        },
+        {
+          "name": "Sliding Window with Set",
+          "description": "Use two pointers to maintain a window of unique characters. Expand the right pointer to add characters. When a duplicate is found, shrink from the left by removing characters until the duplicate is gone. Track the maximum window size.",
+          "timeComplexity": "O(n)",
+          "spaceComplexity": "O(min(m, n))",
+          "codeSolutions": {
+            "javascript": "function lengthOfLongestSubstring(s) {\n  const set = new Set();\n  let left = 0;\n  let maxLen = 0;\n  for (let right = 0; right < s.length; right++) {\n    while (set.has(s[right])) {\n      set.delete(s[left]);\n      left++;\n    }\n    set.add(s[right]);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}",
+            "python": "def length_of_longest_substring(s):\n    char_set = set()\n    left = 0\n    max_len = 0\n    for right in range(len(s)):\n        while s[right] in char_set:\n            char_set.remove(s[left])\n            left += 1\n        char_set.add(s[right])\n        max_len = max(max_len, right - left + 1)\n    return max_len",
+            "java": "public int lengthOfLongestSubstring(String s) {\n    Set<Character> set = new HashSet<>();\n    int left = 0;\n    int maxLen = 0;\n    for (int right = 0; right < s.length(); right++) {\n        while (set.contains(s.charAt(right))) {\n            set.remove(s.charAt(left));\n            left++;\n        }\n        set.add(s.charAt(right));\n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    return maxLen;\n}"
+          }
+        },
+        {
+          "name": "Sliding Window with Map (Optimized)",
+          "description": "Use a Map to store each character's most recent index. When a duplicate is found, jump the left pointer directly past the previous occurrence instead of shrinking one character at a time. This avoids redundant iterations.",
+          "timeComplexity": "O(n)",
+          "spaceComplexity": "O(min(m, n))",
+          "codeSolutions": {
+            "javascript": "function lengthOfLongestSubstring(s) {\n  const map = new Map();\n  let left = 0;\n  let maxLen = 0;\n  for (let right = 0; right < s.length; right++) {\n    if (map.has(s[right]) && map.get(s[right]) >= left) {\n      left = map.get(s[right]) + 1;\n    }\n    map.set(s[right], right);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}",
+            "python": "def length_of_longest_substring(s):\n    char_map = {}\n    left = 0\n    max_len = 0\n    for right in range(len(s)):\n        if s[right] in char_map and char_map[s[right]] >= left:\n            left = char_map[s[right]] + 1\n        char_map[s[right]] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len",
+            "java": "public int lengthOfLongestSubstring(String s) {\n    Map<Character, Integer> map = new HashMap<>();\n    int left = 0;\n    int maxLen = 0;\n    for (int right = 0; right < s.length(); right++) {\n        if (map.containsKey(s.charAt(right)) && map.get(s.charAt(right)) >= left) {\n            left = map.get(s.charAt(right)) + 1;\n        }\n        map.put(s.charAt(right), right);\n        maxLen = Math.max(maxLen, right - left + 1);\n    }\n    return maxLen;\n}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "merge-intervals",
+    "title": "Merge Intervals",
+    "difficulty": "Medium",
+    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "examples": [
+      {
+        "input": "intervals = [[1,3],[2,6],[8,10],[15,18]]",
+        "output": "[[1,6],[8,10],[15,18]]",
+        "explanation": "Since intervals [1,3] and [2,6] overlap, merge them into [1,6]."
+      },
+      {
+        "input": "intervals = [[1,4],[4,5]]",
+        "output": "[[1,5]]",
+        "explanation": "Intervals [1,4] and [4,5] are considered overlapping."
+      }
+    ],
+    "constraints": [
+      "1 <= intervals.length <= 10^4",
+      "intervals[i].length == 2",
+      "0 <= starti <= endi <= 10^4"
+    ],
+    "starterCode": "function merge(intervals) {\n  // Write your solution here\n}",
+    "starterCodePython": "def merge(intervals):\n    # Write your solution here\n    pass",
+    "sampleTestCases": [
+      {
+        "id": "sample-1",
+        "input": [[[1,3],[2,6],[8,10],[15,18]]],
+        "expected": [[1,6],[8,10],[15,18]],
+        "description": "Multiple overlapping and non-overlapping intervals"
+      },
+      {
+        "id": "sample-2",
+        "input": [[[1,4],[4,5]]],
+        "expected": [[1,5]],
+        "description": "Intervals that share an endpoint"
+      },
+      {
+        "id": "sample-3",
+        "input": [[[1,4],[0,4]]],
+        "expected": [[0,4]],
+        "description": "Second interval starts before the first"
+      }
+    ],
+    "hiddenTestCases": [
+      {
+        "id": "hidden-1",
+        "input": [[[1,3]]],
+        "expected": [[1,3]],
+        "description": "Single interval returns itself"
+      },
+      {
+        "id": "hidden-2",
+        "input": [[[1,4],[2,3]]],
+        "expected": [[1,4]],
+        "description": "One interval fully contains another"
+      },
+      {
+        "id": "hidden-3",
+        "input": [[[1,2],[3,4],[5,6]]],
+        "expected": [[1,2],[3,4],[5,6]],
+        "description": "No overlapping intervals"
+      },
+      {
+        "id": "hidden-4",
+        "input": [[[1,10],[2,3],[4,5],[6,7],[8,9]]],
+        "expected": [[1,10]],
+        "description": "One large interval absorbs all others"
+      },
+      {
+        "id": "hidden-5",
+        "input": [[[2,3],[4,5],[6,7],[8,9],[1,10]]],
+        "expected": [[1,10]],
+        "description": "Large interval at the end absorbs all after sorting"
+      }
+    ],
+    "hints": {
+      "progressiveHints": [
+        "What happens if you sort the intervals by their start time? How does that simplify finding overlaps?",
+        "After sorting, overlapping intervals will be adjacent. Compare each interval's start with the previous interval's end to decide whether to merge.",
+        "Maintain a result array. For each interval, either merge it with the last interval in the result (if overlapping) or append it as a new interval."
+      ],
+      "keyInsight": "Sort intervals by start time, then iterate through them. If the current interval overlaps with the last merged interval (current start <= last end), extend the last interval's end. Otherwise, add the current interval to the result.",
+      "approachKeywords": ["sort", "merge", "interval", "overlap", "greedy", "sweep"]
+    },
+    "debrief": {
+      "optimalTimeComplexity": "O(n log n)",
+      "optimalSpaceComplexity": "O(n)",
+      "edgeCases": [
+        "Single interval (returns itself)",
+        "No overlapping intervals (all returned as-is)",
+        "All intervals overlap into one",
+        "One interval fully contains another",
+        "Intervals not given in sorted order",
+        "Intervals that share a single endpoint"
+      ],
+      "alternativeApproaches": [
+        {
+          "name": "Sort and Merge (Optimal)",
+          "description": "Sort intervals by start time. Iterate through the sorted intervals, maintaining a merged result array. For each interval, if it overlaps with the last interval in the result (its start is less than or equal to the last interval's end), merge them by extending the end. Otherwise, add it as a new interval.",
+          "timeComplexity": "O(n log n)",
+          "spaceComplexity": "O(n)",
+          "codeSolutions": {
+            "javascript": "function merge(intervals) {\n  intervals.sort((a, b) => a[0] - b[0]);\n  const merged = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const last = merged[merged.length - 1];\n    if (intervals[i][0] <= last[1]) {\n      last[1] = Math.max(last[1], intervals[i][1]);\n    } else {\n      merged.push(intervals[i]);\n    }\n  }\n  return merged;\n}",
+            "python": "def merge(intervals):\n    intervals.sort(key=lambda x: x[0])\n    merged = [intervals[0]]\n    for start, end in intervals[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged",
+            "java": "public int[][] merge(int[][] intervals) {\n    Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n    List<int[]> merged = new ArrayList<>();\n    merged.add(intervals[0]);\n    for (int i = 1; i < intervals.length; i++) {\n        int[] last = merged.get(merged.size() - 1);\n        if (intervals[i][0] <= last[1]) {\n            last[1] = Math.max(last[1], intervals[i][1]);\n        } else {\n            merged.add(intervals[i]);\n        }\n    }\n    return merged.toArray(new int[merged.size()][]);\n}"
+          }
+        },
+        {
+          "name": "Connected Components",
+          "description": "Build a graph where each interval is a node and edges connect overlapping intervals. Find connected components using BFS or DFS. Each component merges into one interval by taking the minimum start and maximum end. This approach is less efficient but conceptually demonstrates the overlap relationship.",
+          "timeComplexity": "O(n^2)",
+          "spaceComplexity": "O(n^2)",
+          "codeSolutions": {
+            "javascript": "function merge(intervals) {\n  const n = intervals.length;\n  const graph = Array.from({ length: n }, () => []);\n  for (let i = 0; i < n; i++) {\n    for (let j = i + 1; j < n; j++) {\n      if (intervals[i][0] <= intervals[j][1] && intervals[j][0] <= intervals[i][1]) {\n        graph[i].push(j);\n        graph[j].push(i);\n      }\n    }\n  }\n  const visited = new Array(n).fill(false);\n  const result = [];\n  for (let i = 0; i < n; i++) {\n    if (visited[i]) continue;\n    const queue = [i];\n    visited[i] = true;\n    let minStart = intervals[i][0];\n    let maxEnd = intervals[i][1];\n    while (queue.length > 0) {\n      const node = queue.shift();\n      for (const neighbor of graph[node]) {\n        if (!visited[neighbor]) {\n          visited[neighbor] = true;\n          minStart = Math.min(minStart, intervals[neighbor][0]);\n          maxEnd = Math.max(maxEnd, intervals[neighbor][1]);\n          queue.push(neighbor);\n        }\n      }\n    }\n    result.push([minStart, maxEnd]);\n  }\n  return result;\n}",
+            "python": "def merge(intervals):\n    n = len(intervals)\n    graph = [[] for _ in range(n)]\n    for i in range(n):\n        for j in range(i + 1, n):\n            if intervals[i][0] <= intervals[j][1] and intervals[j][0] <= intervals[i][1]:\n                graph[i].append(j)\n                graph[j].append(i)\n    visited = [False] * n\n    result = []\n    for i in range(n):\n        if visited[i]:\n            continue\n        queue = [i]\n        visited[i] = True\n        min_start = intervals[i][0]\n        max_end = intervals[i][1]\n        while queue:\n            node = queue.pop(0)\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    visited[neighbor] = True\n                    min_start = min(min_start, intervals[neighbor][0])\n                    max_end = max(max_end, intervals[neighbor][1])\n                    queue.append(neighbor)\n        result.append([min_start, max_end])\n    return result",
+            "java": "public int[][] merge(int[][] intervals) {\n    int n = intervals.length;\n    List<List<Integer>> graph = new ArrayList<>();\n    for (int i = 0; i < n; i++) graph.add(new ArrayList<>());\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            if (intervals[i][0] <= intervals[j][1] && intervals[j][0] <= intervals[i][1]) {\n                graph.get(i).add(j);\n                graph.get(j).add(i);\n            }\n        }\n    }\n    boolean[] visited = new boolean[n];\n    List<int[]> result = new ArrayList<>();\n    for (int i = 0; i < n; i++) {\n        if (visited[i]) continue;\n        Queue<Integer> queue = new LinkedList<>();\n        queue.add(i);\n        visited[i] = true;\n        int minStart = intervals[i][0];\n        int maxEnd = intervals[i][1];\n        while (!queue.isEmpty()) {\n            int node = queue.poll();\n            for (int neighbor : graph.get(node)) {\n                if (!visited[neighbor]) {\n                    visited[neighbor] = true;\n                    minStart = Math.min(minStart, intervals[neighbor][0]);\n                    maxEnd = Math.max(maxEnd, intervals[neighbor][1]);\n                    queue.add(neighbor);\n                }\n            }\n        }\n        result.add(new int[]{minStart, maxEnd});\n    }\n    return result.toArray(new int[result.size()][]);\n}"
+          }
+        }
+      ]
+    }
+  }
+]
