@@ -8,10 +8,16 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "server": "node server/index.js",
+    "dev:full": "npm run server & npm run dev"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "openai": "^6.35.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

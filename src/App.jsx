@@ -9,10 +9,12 @@ import HintDisplay from './components/HintDisplay.jsx';
 import DebriefPanel from './components/DebriefPanel.jsx';
 import ProblemSelector from './components/ProblemSelector.jsx';
 import LanguageSelector from './components/LanguageSelector.jsx';
+import AskAI from './components/AskAI.jsx';
 
 import { runCode } from './runners/index.js';
 import { generateHint } from './services/copilot.js';
 import { generateDebrief } from './services/debrief.js';
+import { isAIEnabled, getAIHint, getAIDebrief, askAIQuestion } from './services/ai.js';
 
 export default function App() {
   const [problems, setProblems] = useState([]);
@@ -27,6 +29,18 @@ export default function App() {
   const [loadError, setLoadError] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [language, setLanguage] = useState('python');
+
+  // AI state
+  const [aiEnabled, setAiEnabled] = useState(false);
+  const [aiAnswer, setAiAnswer] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [questionsAsked, setQuestionsAsked] = useState(0);
+
+  // Check AI availability on mount
+  useEffect(() => {
+    isAIEnabled().then(setAiEnabled);
+  }, []);
 
   // Load all problems on mount
   useEffect(() => {
@@ -54,6 +68,9 @@ export default function App() {
     setDebriefData(null);
     setTimerRunning(true);
     setView('coding');
+    setAiAnswer(null);
+    setHintsUsed(0);
+    setQuestionsAsked(0);
   }, [language]);
 
   const onChangeProblem = useCallback(() => {
@@ -65,6 +82,9 @@ export default function App() {
     setDebriefData(null);
     setTimerRunning(false);
     setView('selection');
+    setAiAnswer(null);
+    setHintsUsed(0);
+    setQuestionsAsked(0);
   }, []);
 
   const onLanguageChange = useCallback((newLanguage) => {
@@ -111,6 +131,7 @@ export default function App() {
       setTestResults(results);
       setTimerRunning(false);
 
+      // Static debrief (always computed)
       const debrief = generateDebrief({
         problem,
         code,
@@ -118,26 +139,74 @@ export default function App() {
         elapsedTime,
         language,
       });
-      setDebriefData(debrief);
+
+      // Try AI debrief if enabled
+      let aiDebrief = null;
+      if (aiEnabled) {
+        aiDebrief = await getAIDebrief({ problem, code, language, results, elapsedTime });
+      }
+
+      setDebriefData({
+        ...debrief,
+        aiDebrief,
+        aiStats: { hintsUsed, questionsAsked },
+      });
       setView('debrief');
     } catch (err) {
       setTestResults([]);
     } finally {
       setIsRunning(false);
     }
-  }, [problem, code, isRunning, elapsedTime, language]);
+  }, [problem, code, isRunning, elapsedTime, language, aiEnabled, hintsUsed, questionsAsked]);
 
-  const onGetHint = useCallback(() => {
+  const onGetHint = useCallback(async () => {
     if (!problem || isRunning) return;
-    const hint = generateHint({
-      problem,
-      code,
-      previousHints: hints,
-    });
-    // Don't add duplicate hints (stops repeating the fallback)
+
+    // Try AI hint first if enabled
+    if (aiEnabled) {
+      setIsRunning(true);
+      try {
+        const aiHint = await getAIHint({ problem, code, language });
+        if (aiHint?.hint) {
+          const hintText = aiHint.question
+            ? `${aiHint.hint}\n💡 ${aiHint.question}`
+            : aiHint.hint;
+          setHints((prev) => [...prev, hintText]);
+          setHintsUsed((prev) => prev + 1);
+          return;
+        }
+      } catch {
+        // Fall through to static hint
+      } finally {
+        setIsRunning(false);
+      }
+    }
+
+    // Fallback: static hint
+    const hint = generateHint({ problem, code, previousHints: hints });
     if (hints.includes(hint)) return;
     setHints((prev) => [...prev, hint]);
-  }, [problem, code, hints, isRunning]);
+    setHintsUsed((prev) => prev + 1);
+  }, [problem, code, hints, isRunning, aiEnabled, language]);
+
+  const onAskQuestion = useCallback(async (question) => {
+    if (!problem || aiLoading) return;
+    setAiLoading(true);
+    setAiAnswer(null);
+    try {
+      const result = await askAIQuestion({ problem, code, language, question });
+      if (result) {
+        setAiAnswer(result);
+        setQuestionsAsked((prev) => prev + 1);
+      } else {
+        setAiAnswer({ answer: 'AI is unavailable right now. Try again later.', followUpQuestion: '' });
+      }
+    } catch {
+      setAiAnswer({ answer: 'AI is unavailable right now. Try again later.', followUpQuestion: '' });
+    } finally {
+      setAiLoading(false);
+    }
+  }, [problem, code, language, aiLoading]);
 
   const onBackFromDebrief = useCallback(() => {
     setView('coding');
@@ -228,6 +297,14 @@ export default function App() {
           <div className="flex-1 overflow-hidden">
             <CodeEditor code={code} onChange={onCodeChange} language={language} />
           </div>
+
+          {/* Ask AI */}
+          <AskAI
+            onAsk={onAskQuestion}
+            aiEnabled={aiEnabled}
+            answer={aiAnswer}
+            isLoading={aiLoading}
+          />
 
           {/* Test results — compact, scrollable */}
           <div className="h-24 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">

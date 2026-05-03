@@ -21,6 +21,8 @@ export default function DebriefPanel({ debrief, onBack }) {
     alternativeApproaches,
     readinessScore,
     elapsedTime,
+    aiDebrief,
+    aiStats,
   } = debrief;
 
   return (
@@ -131,6 +133,51 @@ export default function DebriefPanel({ debrief, onBack }) {
           {formatTime(elapsedTime)}
         </p>
       </div>
+
+      {/* AI Coach Analysis */}
+      {aiDebrief && (
+        <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-purple-600">
+            🤖 AI Coach Analysis
+          </h3>
+          <div className="mt-3 space-y-3 text-sm text-gray-800">
+            <div>
+              <p className="font-semibold text-purple-700">Main Issue</p>
+              <p>{aiDebrief.mainIssue}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">Why It Failed</p>
+              <p>{aiDebrief.whyItFailed}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">Missed Concept</p>
+              <p>{aiDebrief.missedConcept}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-purple-700">How to Improve</p>
+              <p>{aiDebrief.howToImprove}</p>
+            </div>
+            {aiDebrief.reflectionQuestion && (
+              <div className="rounded-md border border-purple-300 bg-white p-2">
+                <p className="italic text-purple-700">💡 {aiDebrief.reflectionQuestion}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* AI Assistance Stats */}
+      {aiStats && (aiStats.hintsUsed > 0 || aiStats.questionsAsked > 0) && (
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+            AI Assistance Used
+          </h3>
+          <div className="mt-2 flex gap-6 text-sm text-gray-700">
+            <p>Hints: {aiStats.hintsUsed}</p>
+            <p>Questions: {aiStats.questionsAsked}</p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
