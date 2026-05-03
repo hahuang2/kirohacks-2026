@@ -134,6 +134,8 @@ export default function App() {
       code,
       previousHints: hints,
     });
+    // Don't add duplicate hints (stops repeating the fallback)
+    if (hints.includes(hint)) return;
     setHints((prev) => [...prev, hint]);
   }, [problem, code, hints, isRunning]);
 
@@ -233,7 +235,7 @@ export default function App() {
           </div>
 
           {/* Hints */}
-          <div className="h-28 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">
+          <div className="h-44 shrink-0 overflow-y-auto border-t border-gray-200 bg-white">
             <HintDisplay hints={hints} />
           </div>
         </div>
